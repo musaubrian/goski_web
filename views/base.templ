@@ -1,0 +1,47 @@
+package views
+
+templ Base() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title>Goski</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+			<link rel="stylesheet" href="/static/css/notify.min.css"/>
+			<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+			<script src="https://cdn.tailwindcss.com"></script>
+		</head>
+		<body style="font-family:'Space Mono',ui-sans-serif, system-ui;">
+			{ children... }
+			<script src="static/js/notify.min.js"></script>
+			<script>
+		var urlParams = new URLSearchParams(window.location.search);
+		var errExists = urlParams.has("error")
+		var successExists = urlParams.has("success")
+		if (errExists) {
+			var msg = urlParams.get("error")
+			new Notify ({
+				text:msg,
+				status: 'error',
+				autoclose: true,
+				autotimeout: 3000
+			})
+		}
+
+		if (successExists) {
+			var msg = urlParams.get("success")
+			new Notify ({
+				text:msg,
+				status: 'success',
+				autoclose: true,
+				autotimeout: 3000
+			})
+		}
+		</script>
+		</body>
+	</html>
+}
