@@ -3,8 +3,8 @@ package views
 templ Index() {
 	@Base() {
 		<div class="w-full flex flex-col justify-center items-center bg-slate-900 text-slate-100 tracking-tight">
-			<div class="bg-emerald-500 text-center text-md w-full p-2 transition-all relative fixed top-0" id="info-banner">
-				<!--errors, success infomation get chucked here-->
+			<div class="text-center text-md w-full p-2 transition-all fixed top-0 left-0 z-50" id="info-banner">
+				<!--errors, success information get chucked here-->
 			</div>
 			<form id="ascii-form" class="flex flex-col justify-center items-center w-full h-screen text-lg font-light" method="POST" action="/to-ascii" enctype="multipart/form-data">
 				<h1 class="text-4xl font-semibold mb-6 text-center text-wrap text-balance">Image > ASCII Generator</h1>
@@ -35,20 +35,22 @@ templ Index() {
 		<script>
                         let imgName;
                         function saveAsImage() {
+                                setLoading("Saving image...")
                                 const asciiOutput = document.getElementById("ascii-image")
 
                                 html2canvas(asciiOutput, {
                                         backgroundColor: window.getComputedStyle(asciiOutput).backgroundColor,
-                                        scale: 2
+                                        scale: 4
                                     }).then(canvas => {
                                         const link = document.createElement('a')
                                         link.href = canvas.toDataURL('image/png')
                                         link.download = `${imgName}.ascii.png`
                                         link.click()
+                                        setSuccess("Saved Successfully")
                                     }).catch(error => {
                                         console.error('Error saving ASCII art as image:', error)
                                         setError("Failed to save image. Please try again.")
-                                    });
+                                    })
                         }
 
                         function showSaveBtn() {
@@ -56,11 +58,20 @@ templ Index() {
                                 saveBtn.classList.remove("hidden")
                         }
 
+                        function setLoading(msg) {
+                                const infoBanner = document.getElementById("info-banner")
+
+                                infoBanner.classList.remove("hidden")
+                                infoBanner.classList.remove("bg-emerald-500", "bg-red-400")
+                                infoBanner.classList.add("bg-sky-600")
+                                infoBanner.innerHTML = msg
+                        }
+
                         function setError(msg) {
                                 const infoBanner = document.getElementById("info-banner")
 
                                 infoBanner.classList.remove("hidden")
-                                infoBanner.classList.remove("bg-emerald-500")
+                                infoBanner.classList.remove("bg-emerald-500", "bg-sky-600")
                                 infoBanner.classList.add("bg-red-400")
                                 infoBanner.innerHTML = msg
                         }
@@ -94,7 +105,6 @@ templ Index() {
                                 const uploadedImage = document.getElementById('uploaded-image');
 
                                 imgName = file.name.split(".")[0]
-                                console.log("IMG NAME: ", imgName)
 
                                 if (file) {
                                         resetBanner()
@@ -112,6 +122,7 @@ templ Index() {
 
                         document.getElementById('ascii-form').addEventListener('submit', async function(event) {
                                 event.preventDefault();
+                                setLoading("Uploading...")
 
                                 const fileInput = document.getElementById('file-upload');
 
@@ -149,6 +160,7 @@ templ Index() {
                                     setError("Something went wrong, don't worry its not your fault")
                                 }
                         })
+
                         resetBanner()
                 </script>
 	}
