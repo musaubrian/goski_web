@@ -113,7 +113,7 @@ func autoScale(size image.Rectangle, vw, vh int) (int, int) {
 	targetHeight := int(float64(vh) * 0.8)
 
 	ratio := float64(targetHeight) / float64(size.Dy())
-	newWidth := int(float64(size.Dx()) * ratio * 1.5)
+	newWidth := int(float64(size.Dx()) * ratio * 1.6)
 	if newWidth > vw {
 		ratio = float64(vw) / float64(size.Dx())
 		targetHeight = int(float64(size.Dy()) * ratio)
