@@ -3,7 +3,7 @@ module github.com/musaubrian/goski_web
 go 1.22.4
 
 require (
-	github.com/a-h/templ v0.2.771
+	github.com/a-h/templ v0.2.778
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 )

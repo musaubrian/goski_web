@@ -15,7 +15,6 @@ import (
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/musaubrian/goski_web/views"
-	"github.com/nfnt/resize"
 )
 
 const port = "9999"
@@ -87,8 +86,9 @@ func convertToASCII(src *multipart.FileHeader, vw, vh int) (string, error) {
 		return "", fmt.Errorf("Failed to decode image")
 	}
 
-	nw, nh := autoScale(img.Bounds(), vw, vh)
-	img = resize.Resize(uint(nw), uint(nh), img, resize.MitchellNetravali)
+	_, _ = vw, vh
+	// nw, nh := autoScale(img.Bounds(), vw, vh)
+	// img = resize.Resize(uint(nw), uint(nh), img, resize.MitchellNetravali)
 	result := grayScaledAscii(img, font)
 
 	return result, nil

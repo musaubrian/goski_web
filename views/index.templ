@@ -20,11 +20,11 @@ templ Index() {
 				</label>
 				<button type="submit" class="mt-6 bg-slate-900 w-4/6 md:w-1/6  bg-slate-700 p-3 rounded hover:bg-slate-800 transition-all">Convert</button>
 			</form>
-			<div class="flex flex-col justify-center items-center min-h-screen w-full mt-8 border-t border-slate-600 py-2">
-				<div id="ascii-image" class="w-full h-full  bg-slate-900 text-center">
-					<pre id="ascii-output" class="whitespace-pre font-mono text-[4.2px]"></pre>
+			<div class="flex flex-col justify-center items-center w-full mt-8 border-t border-slate-600 py-2">
+				<div id="ascii-container" class="w-[95vw] h-[95vh] bg-slate-900 flex items-center justify-center overflow-hidden">
+					<pre id="ascii-output" class="whitespace-pre font-mono text-center w-full h-full flex items-center justify-center p-2"></pre>
 				</div>
-				<button id="save-btn" type="button" onclick="saveAsImage()" class=" hidden mt-6 bg-blue-600 inline-flex items-center justify-center gap-2 mb-4 px-6 py-2 rounded hover:bg-blue-700 transition-all">
+				<button id="save-btn" type="button" onclick="saveAsImage()" class="hidden mt-6 bg-blue-600 inline-flex items-center justify-center gap-2 mb-4 px-6 py-2 rounded hover:bg-blue-700 transition-all">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
 					</svg>
@@ -36,10 +36,10 @@ templ Index() {
                         let imgName;
                         function saveAsImage() {
                                 setLoading("Saving image...")
-                                const asciiOutput = document.getElementById("ascii-image")
+                                const asciiOutput = document.getElementById("ascii-container")
 
                                 html2canvas(asciiOutput, {
-                                        backgroundColor: window.getComputedStyle(asciiOutput).backgroundColor,
+                                        backgroundColor: window.getComputedStyle(asciiOutput).backgroundColor|| "rgb(30, 41, 59)",
                                         scale: 4
                                     }).then(canvas => {
                                         const link = document.createElement('a')
@@ -92,9 +92,43 @@ templ Index() {
 
                         function getViewportSize() {
                             return {
-                                width: Math.round(window.innerWidth *0.8),
-                                height: Math.round(window.innerHeight*0.3)
+                                width: Math.round(window.innerWidth *0.9),
+                                height: Math.round(window.innerHeight*0.9)
                             }
+                        }
+
+                        function fitAsciiArt() {
+                                const asciiOutput = document.getElementById('ascii-output');
+                                const asciiContainer = document.getElementById('ascii-container');
+                                const containerWidth = asciiContainer.clientWidth;
+                                const containerHeight = asciiContainer.clientHeight;
+
+                                asciiOutput.style.fontSize = '';
+                                asciiOutput.style.lineHeight = '';
+                                asciiOutput.style.letterSpacing = '';
+
+                                const lines = asciiOutput.textContent.trim().split('\n');
+                                const rows = lines.length;
+                                const cols = Math.max(...lines.map(line => line.length));
+
+                                let fontSize = (containerWidth - 16) / cols; // Subtracting padding
+
+                                asciiOutput.style.fontSize = `${fontSize}px`;
+                                asciiOutput.style.lineHeight = '1';
+
+                                while (asciiOutput.scrollHeight > containerHeight && fontSize > 1) {
+                                        fontSize -= 0.5;
+                                        asciiOutput.style.fontSize = `${fontSize}px`;
+                                }
+
+                                // If there's extra vertical space, add letter-spacing to fill width
+                                if (asciiOutput.scrollHeight < containerHeight) {
+                                        const extraSpace = containerWidth - (cols * fontSize);
+                                        if (extraSpace > 0) {
+                                                const letterSpacing = extraSpace / (cols - 1);
+                                                asciiOutput.style.letterSpacing = `${letterSpacing+20}px`;
+                                        }
+                                }
                         }
 
 
@@ -149,6 +183,7 @@ templ Index() {
                                         if (response.ok) {
                                             if (data.ascii) {
                                                 document.getElementById('ascii-output').textContent = data.ascii;
+                                                fitAsciiArt()
                                                 setSuccess("Image converted")
                                                 showSaveBtn()
                                             }
@@ -161,6 +196,7 @@ templ Index() {
                                 }
                         })
 
+                        window.addEventListener('resize', fitAsciiArt);
                         resetBanner()
                 </script>
 	}
